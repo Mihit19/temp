@@ -7,7 +7,1132 @@
 </head>
 <body>
     <pre>
-        test 2
+        *****AFFINE CIPHER*****
+        import java.util.Scanner;
+
+public class AffineCipher {
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("1 for encryption\n2 for decryption\n\nEnter your choice: ");
+        int choice = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
+
+        switch (choice) {
+            case 1:
+                encryption();
+                break;
+            case 2:
+                decryption();
+                break;
+            default:
+                System.out.println("Invalid choice");
+        }
+
+        scanner.close();
+    }
+
+    public static void encryption() {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter the plain text: ");
+        String plainText = scanner.nextLine().toLowerCase();
+
+        System.out.print("Enter the value of a (should be coprime with 26): ");
+        int a = scanner.nextInt();
+
+        System.out.print("Enter the value of b: ");
+        int b = scanner.nextInt();
+
+        String cipherText = encrypt(plainText, a, b);
+        System.out.println("Cipher Text: " + cipherText);
+
+        scanner.close();
+    }
+
+    public static void decryption() {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter the cipher text: ");
+        String cipherText = scanner.nextLine().toLowerCase();
+
+        System.out.print("Enter the value of a^-1 (mod 26): ");
+        int aInverse = scanner.nextInt();
+
+        System.out.print("Enter the value of b: ");
+        int b = scanner.nextInt();
+
+        String plainText = decrypt(cipherText, aInverse, b);
+        System.out.println("Plain Text: " + plainText);
+
+        scanner.close();
+    }
+
+    public static String encrypt(String plainText, int a, int b) {
+        StringBuilder cipherText = new StringBuilder();
+
+        for (char c : plainText.toCharArray()) {
+            if (Character.isLetter(c)) {
+                int x = c - 'a';
+                int encryptedChar = (a * x + b) % 26;
+                cipherText.append((char) (encryptedChar + 'a'));
+            } else {
+                cipherText.append(c);
+            }
+        }
+
+        return cipherText.toString();
+    }
+
+    public static String decrypt(String cipherText, int aInverse, int b) {
+        StringBuilder plainText = new StringBuilder();
+
+        for (char c : cipherText.toCharArray()) {
+            if (Character.isLetter(c)) {
+                int y = c - 'a';
+                int decryptedChar = (aInverse * (y - b + 26)) % 26;
+                plainText.append((char) (decryptedChar + 'a'));
+            } else {
+                plainText.append(c);
+            }
+        }
+
+        return plainText.toString();
+    }
+}
+
+****CEASER*****
+import java.util.Scanner;
+
+public class ceaser {
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Choose an option:");
+        System.out.println("1. Encryption");
+        System.out.println("2. Decryption");
+        int option = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
+
+        switch (option) {
+            case 1:
+                encryption();
+                break;
+            case 2:
+                decryption();
+                break;
+            default:
+                System.out.println("Invalid option");
+        }
+
+        scanner.close();
+    }
+
+    public static void encryption() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter the plain text: ");
+        String pt = scanner.nextLine();
+        String ptLow = pt.toLowerCase();
+        System.out.print("Enter the key value: ");
+        int k = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
+
+        String ct = "";
+        for (char i : ptLow.toCharArray()) {
+            if (i != ' ') {
+                ct += (char) ((((i - 'a') + k) % 26) + 'a');
+            }
+        }
+        System.out.println("\nYour cipher text is: " + ct);
+    }
+
+    public static void decryption() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter the cipher text: ");
+        String ct = scanner.nextLine();
+        String ctLow = ct.toLowerCase();
+        System.out.print("Enter the key value: ");
+        int k = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
+
+        String pt = "";
+        for (char i : ctLow.toCharArray()) {
+            if (i != ' ') {
+                pt += (char) ((((i - 'a') - k + 26) % 26) + 'a');
+            }
+        }
+        System.out.println("\nYour plain text is: " + pt);
+    }
+}
+
+***HILLCIPHER****
+import java.util.Scanner;
+
+public class HillCipher {
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        // Read key matrix size and key from the user
+        System.out.print("Enter the size of the key matrix: ");
+        int n = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
+        System.out.print("Enter the key: ");
+        String keyInput = scanner.nextLine().toUpperCase().replaceAll("\\s+", "");
+        int[][] keyMatrix = keyToMatrix(keyInput, n);
+
+        // Read message from the user
+        System.out.print("Enter the message: ");
+        String messageInput = scanner.nextLine().toUpperCase().replaceAll("\\s+", "");
+
+        // Encrypt and print the encrypted message
+        String encryptedMessage = hillCipherEncrypt(messageInput, keyMatrix);
+        System.out.println("Encrypted message: " + encryptedMessage);
+
+        // Decrypt and print the decrypted message
+        String decryptedMessage = hillCipherDecrypt(encryptedMessage, keyMatrix);
+        System.out.println("Decrypted message: " + decryptedMessage);
+
+        scanner.close();
+    }
+
+    // Function to convert key string to key matrix
+    public static int[][] keyToMatrix(String key, int n) {
+        int[][] matrix = new int[n][n];
+        int k = 0;
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                matrix[i][j] = key.charAt(k) - 'A';
+                k = (k + 1) % key.length();
+            }
+        }
+
+        return matrix;
+    }
+
+    // Function to encrypt using Hill cipher
+    public static String hillCipherEncrypt(String message, int[][] keyMatrix) {
+        int blockSize = keyMatrix.length;
+        StringBuilder result = new StringBuilder();
+
+        // Padding message if necessary
+        if (message.length() % blockSize != 0) {
+            message += "X".repeat(blockSize - (message.length() % blockSize));
+        }
+
+        // Encrypting the message
+        for (int i = 0; i < message.length(); i += blockSize) {
+            StringBuilder block = new StringBuilder();
+            for (int j = i; j < i + blockSize; j++) {
+                block.append((int) (message.charAt(j) - 'A'));
+            }
+
+            int[] blockVector = new int[blockSize];
+            for (int j = 0; j < blockSize; j++) {
+                blockVector[j] = block.charAt(j) - '0';
+            }
+
+            int[] encryptedBlockVector = matrixVectorMultiplication(keyMatrix, blockVector);
+
+            for (int j = 0; j < blockSize; j++) {
+                result.append((char) (encryptedBlockVector[j] + 'A'));
+            }
+        }
+
+        return result.toString();
+    }
+
+    // Function to decrypt using Hill cipher
+    public static String hillCipherDecrypt(String ciphertext, int[][] keyMatrix) {
+        int blockSize = keyMatrix.length;
+        StringBuilder result = new StringBuilder();
+
+        // Decrypting the message
+        for (int i = 0; i < ciphertext.length(); i += blockSize) {
+            StringBuilder block = new StringBuilder();
+            for (int j = i; j < i + blockSize; j++) {
+                block.append((int) (ciphertext.charAt(j) - 'A'));
+            }
+
+            int[] blockVector = new int[blockSize];
+            for (int j = 0; j < blockSize; j++) {
+                blockVector[j] = block.charAt(j) - '0';
+            }
+
+            int[] decryptedBlockVector = matrixVectorMultiplication(matrix_mod_inv(keyMatrix, 26), blockVector);
+
+            for (int j = 0; j < blockSize; j++) {
+                result.append((char) (decryptedBlockVector[j] + 'A'));
+            }
+        }
+
+        return result.toString();
+    }
+
+    // Function to perform matrix-vector multiplication
+    public static int[] matrixVectorMultiplication(int[][] matrix, int[] vector) {
+        int[] result = new int[vector.length];
+
+        for (int i = 0; i < matrix.length; i++) {
+            int sum = 0;
+            for (int j = 0; j < vector.length; j++) {
+                sum += matrix[i][j] * vector[j];
+            }
+            result[i] = sum % 26;
+        }
+
+        return result;
+    }
+
+    public static int[][] matrix_mod_inv(int[][] matrix, int modulus) {
+        int det = (int) Math.round(determinant(matrix));
+        int detInv = modInverse(det, modulus);
+        int[][] adjugate = adjugate(matrix);
+        int[][] inverseMatrix = new int[matrix.length][matrix.length];
+
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix.length; j++) {
+                inverseMatrix[i][j] = (adjugate[i][j] * detInv) % modulus;
+                if (inverseMatrix[i][j] < 0) {
+                    inverseMatrix[i][j] += modulus; // Ensure the result is non-negative
+                }
+            }
+        }
+
+        return inverseMatrix;
+    }
+
+    public static int determinant(int[][] matrix) {
+        if (matrix.length == 1) {
+            return matrix[0][0];
+        }
+
+        int det = 0;
+        int sign = 1;
+
+        for (int i = 0; i < matrix.length; i++) {
+            int[][] minorMatrix = minor(matrix, 0, i);
+            det += sign * matrix[0][i] * determinant(minorMatrix);
+            sign *= -1;
+        }
+
+        return det;
+    }
+
+    public static int[][] adjugate(int[][] matrix) {
+        int[][] result = new int[matrix.length][matrix.length];
+
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix.length; j++) {
+                int[][] minorMatrix = minor(matrix, i, j);
+                int minorDeterminant = determinant(minorMatrix);
+                result[i][j] = (int) Math.pow(-1, i + j) * minorDeterminant;
+            }
+        }
+
+        return transpose(result);
+    }
+
+    public static int[][] minor(int[][] matrix, int row, int col) {
+        int[][] result = new int[matrix.length - 1][matrix.length - 1];
+
+        for (int i = 0, k = 0; i < matrix.length; i++) {
+            if (i != row) {
+                for (int j = 0, l = 0; j < matrix.length; j++) {
+                    if (j != col) {
+                        result[k][l] = matrix[i][j];
+                        l++;
+                    }
+                }
+                k++;
+            }
+        }
+
+        return result;
+    }
+
+    public static int[][] transpose(int[][] matrix) {
+        int[][] result = new int[matrix.length][matrix[0].length];
+
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[0].length; j++) {
+                result[j][i] = matrix[i][j];
+            }
+        }
+
+        return result;
+    }
+
+    public static int modInverse(int a, int m) {
+        a %= m;
+        for (int x = 1; x < m; x++) {
+            if ((a * x) % m == 1) {
+                return x;
+            }
+        }
+        return 1;
+    }
+
+}
+
+****ONETIMEPAD****
+import java.util.Scanner;
+
+public class OneTimePad {
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter the plain text: ");
+        String plainText = scanner.nextLine();
+        System.out.print("Enter the key: ");
+        String key = scanner.nextLine();
+
+        String encryptedText = stringEncryption(plainText.toUpperCase(), key.toUpperCase());
+        System.out.println("Cipher Text - " + encryptedText);
+        System.out.println("Message - " + stringDecryption(encryptedText, key.toUpperCase()));
+
+        scanner.close();
+    }
+
+    public static String stringEncryption(String text, String key) {
+        StringBuilder cipherText = new StringBuilder();
+        int[] cipher = new int[key.length()];
+
+        for (int i = 0; i < key.length(); i++) {
+            cipher[i] = text.charAt(i) - 'A' + key.charAt(i) - 'A';
+        }
+
+        for (int i = 0; i < key.length(); i++) {
+            if (cipher[i] > 25) {
+                cipher[i] -= 26;
+            }
+        }
+
+        for (int i = 0; i < key.length(); i++) {
+            char x = (char) (cipher[i] + 'A');
+            cipherText.append(x);
+        }
+
+        return cipherText.toString();
+    }
+
+    public static String stringDecryption(String s, String key) {
+        StringBuilder plainText = new StringBuilder();
+        int[] plain = new int[key.length()];
+
+        for (int i = 0; i < key.length(); i++) {
+            plain[i] = s.charAt(i) - 'A' - (key.charAt(i) - 'A');
+        }
+
+        for (int i = 0; i < key.length(); i++) {
+            if (plain[i] < 0) {
+                plain[i] += 26;
+            }
+        }
+
+        for (int i = 0; i < key.length(); i++) {
+            char x = (char) (plain[i] + 'A');
+            plainText.append(x);
+        }
+
+        return plainText.toString();
+    }
+}
+
+*****PLAYFAIR*****
+
+import java.util.HashMap;
+import java.util.Scanner;
+
+public class PlayfairCipher {
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("1 for encryption\n2 for decryption\n\nEnter your choice: ");
+        int choice = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
+
+        switch (choice) {
+            case 1:
+                encryption();
+                break;
+            case 2:
+                decryption();
+                break;
+            default:
+                System.out.println("Invalid choice");
+        }
+
+        scanner.close();
+    }
+
+    public static void encryption() {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter your plain text: ");
+        String pt = scanner.nextLine().replace("j", "i").toLowerCase();
+        System.out.print("Enter the key text: ");
+        String kt = scanner.nextLine().replace("j", "i").toLowerCase();
+
+        String dupl = "";
+        for (char c : kt.toCharArray()) {
+            if (c != ' ' && !dupl.contains(Character.toString(c))) {
+                dupl += c;
+            }
+        }
+
+        String temp = "abcdefghiklmnopqrstuvwxyz";
+        for (char c : dupl.toCharArray()) {
+            if (temp.contains(Character.toString(c))) {
+                temp = temp.replace(Character.toString(c), "");
+            }
+        }
+
+        char[][] key = new char[5][5];
+        HashMap<Character, Integer[]> keyMap = new HashMap<>();
+        int index = 0;
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < 5; j++) {
+                if (index < dupl.length()) {
+                    key[i][j] = dupl.charAt(index);
+                    keyMap.put(dupl.charAt(index), new Integer[] { i, j });
+                    index++;
+                } else {
+                    key[i][j] = temp.charAt(0);
+                    keyMap.put(temp.charAt(0), new Integer[] { i, j });
+                    temp = temp.substring(1);
+                }
+            }
+        }
+
+        System.out.println("\nYour key matrix is:");
+        for (char[] row : key) {
+            System.out.println(row);
+        }
+
+        StringBuilder given = new StringBuilder(pt.replaceAll(" ", ""));
+        if (given.length() % 2 != 0) {
+            given.append("z");
+        }
+
+        StringBuilder ct = new StringBuilder();
+        for (int i = 0; i < given.length(); i += 2) {
+            char c1 = given.charAt(i);
+            char c2 = given.charAt(i + 1);
+            Integer[] loc1 = keyMap.get(c1);
+            Integer[] loc2 = keyMap.get(c2);
+            if (loc1[0].equals(loc2[0])) {
+                // same row
+                ct.append(key[loc1[0]][(loc1[1] + 1) % 5]).append(key[loc2[0]][(loc2[1] + 1) % 5]);
+            } else if (loc1[1].equals(loc2[1])) {
+                // same column
+                ct.append(key[(loc1[0] + 1) % 5][loc1[1]]).append(key[(loc2[0] + 1) % 5][loc1[1]]);
+            } else {
+                // different letter
+                ct.append(key[loc1[0]][loc2[1]]).append(key[loc2[0]][loc1[1]]);
+            }
+        }
+
+        System.out.println("Your cipher text message is: " + ct);
+
+        scanner.close();
+    }
+
+    public static void decryption() {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter your cipher text: ");
+        String ct = scanner.nextLine().replace("j", "i").toLowerCase();
+        System.out.print("Enter the key text: ");
+        String kt = scanner.nextLine().replace("j", "i").toLowerCase();
+
+        String dupl = "";
+        for (char c : kt.toCharArray()) {
+            if (c != ' ' && !dupl.contains(Character.toString(c))) {
+                dupl += c;
+            }
+        }
+
+        String temp = "abcdefghiklmnopqrstuvwxyz";
+        for (char c : dupl.toCharArray()) {
+            if (temp.contains(Character.toString(c))) {
+                temp = temp.replace(Character.toString(c), "");
+            }
+        }
+
+        char[][] key = new char[5][5];
+        HashMap<Character, Integer[]> keyMap = new HashMap<>();
+        int index = 0;
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < 5; j++) {
+                if (index < dupl.length()) {
+                    key[i][j] = dupl.charAt(index);
+                    keyMap.put(dupl.charAt(index), new Integer[] { i, j });
+                    index++;
+                } else {
+                    key[i][j] = temp.charAt(0);
+                    keyMap.put(temp.charAt(0), new Integer[] { i, j });
+                    temp = temp.substring(1);
+                }
+            }
+        }
+
+        System.out.println("\nYour key matrix is:");
+        for (char[] row : key) {
+            System.out.println(row);
+        }
+
+        StringBuilder given = new StringBuilder(ct.replaceAll(" ", ""));
+        if (given.length() % 2 != 0) {
+            given.append("z");
+        }
+
+        StringBuilder pt = new StringBuilder();
+        for (int i = 0; i < given.length(); i += 2) {
+            char c1 = given.charAt(i);
+            char c2 = given.charAt(i + 1);
+            Integer[] loc1 = keyMap.get(c1);
+            Integer[] loc2 = keyMap.get(c2);
+            if (loc1[0].equals(loc2[0])) {
+                // same row
+                pt.append(key[loc1[0]][(loc1[1] - 1 + 5) % 5]).append(key[loc2[0]][(loc2[1] - 1 + 5) % 5]);
+            } else if (loc1[1].equals(loc2[1])) {
+                // same column
+                pt.append(key[(loc1[0] - 1 + 5) % 5][loc1[1]]).append(key[(loc2[0] - 1 + 5) % 5][loc1[1]]);
+            } else {
+                // different letter
+                pt.append(key[loc1[0]][loc2[1]]).append(key[loc2[0]][loc1[1]]);
+            }
+        }
+
+        System.out.println("\nYour original text message is:");
+        System.out.println(pt);
+
+        scanner.close();
+    }
+}
+
+****VIGNERE CIPHER*****
+
+import java.util.Scanner;
+
+public class VigenereCipher {
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter the message: ");
+        String string = scanner.nextLine().toUpperCase();
+        System.out.print("Enter the keyword: ");
+        String keyword = scanner.nextLine().toUpperCase();
+
+        String key = generateKey(string, keyword);
+        String encryptText = encryption(string, key);
+
+        System.out.println("Encrypted message: " + encryptText.toLowerCase());
+        System.out.println("Decrypted message: " + decryption(encryptText, key).toLowerCase());
+
+        scanner.close();
+    }
+
+    public static String generateKey(String string, String key) {
+        StringBuilder generatedKey = new StringBuilder();
+        int keyLength = key.length();
+
+        for (int i = 0; i < string.length(); i++) {
+            generatedKey.append(key.charAt(i % keyLength));
+        }
+        return generatedKey.toString();
+    }
+
+    public static String encryption(String string, String key) {
+        StringBuilder encryptedText = new StringBuilder();
+
+        for (int i = 0; i < string.length(); i++) {
+            int x = (string.charAt(i) + key.charAt(i)) % 26;
+            x += 'A';
+            encryptedText.append((char) x);
+        }
+        return encryptedText.toString();
+    }
+
+    public static String decryption(String encryptedText, String key) {
+        StringBuilder decryptedText = new StringBuilder();
+
+        for (int i = 0; i < encryptedText.length(); i++) {
+            int x = (encryptedText.charAt(i) - key.charAt(i) + 26) % 26;
+            x += 'A';
+            decryptedText.append((char) x);
+        }
+        return decryptedText.toString();
+    }
+}
+
+****INVERSE OF A MATRIX*****
+
+import java.util.Scanner;
+
+public class tp {
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter the size of the matrix (square matrix): ");
+        int size = scanner.nextInt();
+
+        // Input matrix from the user
+        double[][] matrix = new double[size][size];
+        System.out.println("Enter the elements of the matrix:");
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                matrix[i][j] = scanner.nextDouble();
+            }
+        }
+
+        // Calculate inverse if it exists
+        double[][] inverse = calculateInverse(matrix);
+
+        // Display the inverse if it exists
+        if (inverse != null) {
+            System.out.println("Inverse of the matrix:");
+            for (int i = 0; i < size; i++) {
+                for (int j = 0; j < size; j++) {
+                    System.out.print(inverse[i][j] + " ");
+                }
+                System.out.println();
+            }
+        } else {
+            System.out.println("Inverse does not exist for this matrix.");
+        }
+
+        scanner.close();
+    }
+
+    // Method to calculate the inverse of a matrix
+    public static double[][] calculateInverse(double[][] matrix) {
+        int size = matrix.length;
+
+        // Check if the matrix is square
+        if (size != matrix[0].length) {
+            System.out.println("Matrix is not square. Inverse does not exist.");
+            return null;
+        }
+
+        // Create an augmented matrix [A | I] for row operations
+        double[][] augmentedMatrix = new double[size][2 * size];
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                augmentedMatrix[i][j] = matrix[i][j];
+            }
+            augmentedMatrix[i][i + size] = 1; // Identity matrix part
+        }
+
+        // Perform row operations to get reduced row echelon form
+        for (int i = 0; i < size; i++) {
+            // Swap rows if the pivot element is zero
+            if (augmentedMatrix[i][i] == 0) {
+                int j;
+                for (j = i + 1; j < size; j++) {
+                    if (augmentedMatrix[j][i] != 0) {
+                        swapRows(augmentedMatrix, i, j);
+                        break;
+                    }
+                }
+                // If no non-zero element is found in the column, inverse does not exist
+                if (j == size) {
+                    System.out.println("Inverse does not exist for this matrix.");
+                    return null;
+                }
+            }
+
+            // Scale the row to make the pivot element 1
+            double pivot = augmentedMatrix[i][i];
+            for (int j = 0; j < 2 * size; j++) {
+                augmentedMatrix[i][j] /= pivot;
+            }
+
+            // Make other elements in the column zero
+            for (int j = 0; j < size; j++) {
+                if (j != i) {
+                    double factor = augmentedMatrix[j][i];
+                    for (int k = 0; k < 2 * size; k++) {
+                        augmentedMatrix[j][k] -= factor * augmentedMatrix[i][k];
+                    }
+                }
+            }
+        }
+
+        // Extract the inverse matrix from the augmented matrix
+        double[][] inverse = new double[size][size];
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                inverse[i][j] = augmentedMatrix[i][j + size];
+            }
+        }
+
+        return inverse;
+    }
+
+    // Method to swap two rows in a matrix
+    public static void swapRows(double[][] matrix, int row1, int row2) {
+        double[] temp = matrix[row1];
+        matrix[row1] = matrix[row2];
+        matrix[row2] = temp;
+    }
+}
+
+****DETERMINANT OF MATRIX****
+
+import java.util.Scanner;
+
+public class tp {
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter the size of the square matrix: ");
+        int size = scanner.nextInt();
+
+        // Input matrix from the user
+        double[][] matrix = new double[size][size];
+        System.out.println("Enter the elements of the matrix:");
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                matrix[i][j] = scanner.nextDouble();
+            }
+        }
+
+        // Calculate and display the determinant
+        double determinant = calculateDeterminant(matrix);
+        System.out.println("Determinant of the matrix: " + determinant);
+
+        scanner.close();
+    }
+
+    // Method to calculate the determinant of a matrix
+    public static double calculateDeterminant(double[][] matrix) {
+        int size = matrix.length;
+
+        // Base case: For 1x1 matrix, determinant is the only element
+        if (size == 1) {
+            return matrix[0][0];
+        }
+
+        double determinant = 0;
+
+        // Recursive case: Expand along the first row
+        for (int j = 0; j < size; j++) {
+            determinant += matrix[0][j] * cofactor(matrix, 0, j);
+        }
+
+        return determinant;
+    }
+
+    // Method to calculate the cofactor of a matrix element
+    public static double cofactor(double[][] matrix, int row, int col) {
+        int size = matrix.length;
+        double[][] minor = new double[size - 1][size - 1];
+
+        // Create the minor matrix by excluding the current row and column
+        for (int i = 0, p = 0; i < size; i++) {
+            if (i != row) {
+                for (int j = 0, q = 0; j < size; j++) {
+                    if (j != col) {
+                        minor[p][q++] = matrix[i][j];
+                    }
+                }
+                p++;
+            }
+        }
+
+        // Calculate the determinant of the minor matrix
+        double minorDeterminant = calculateDeterminant(minor);
+
+        // Calculate and return the cofactor
+        return Math.pow(-1, row + col) * minorDeterminant;
+    }
+}
+
+****AES KEY GENERATION****
+
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+
+public class AESKeyGeneration {
+    public static void main(String[] args) throws Exception {
+        KeyGenerator keyGen = KeyGenerator.getInstance("AES");
+        keyGen.init(256); // You can specify key size here, such as 128 or 192
+        SecretKey secretKey = keyGen.generateKey();
+        byte[] encodedKey = secretKey.getEncoded();
+        System.out.println("Generated AES Key: " + bytesToHex(encodedKey));
+    }
+
+    private static String bytesToHex(byte[] bytes) {
+        StringBuilder result = new StringBuilder();
+        for (byte b : bytes) {
+            result.append(String.format("%02X", b));
+        }
+        return result.toString();
+    }
+}
+
+****RSA*****
+
+import java.math.BigInteger;
+import java.util.Scanner;
+
+public class RSA {
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Enter a prime number (p):");
+        BigInteger p = scanner.nextBigInteger();
+
+        if (!p.isProbablePrime(80)) {
+            System.out.println("Please enter a prime number.");
+            return;
+        }
+
+        System.out.println("Enter another prime number (q):");
+        BigInteger q = scanner.nextBigInteger();
+
+        if (!q.isProbablePrime(80)) {
+            System.out.println("Please enter a prime number.");
+            return;
+        }
+
+        // Calculate n
+        BigInteger n = p.multiply(q);
+
+        // Calculate phi(n)
+        BigInteger phi = p.subtract(BigInteger.ONE).multiply(q.subtract(BigInteger.ONE));
+
+        // Choose e such that 1 < e < phi(n) and gcd(e, phi(n)) = 1
+        BigInteger e = BigInteger.valueOf(65537); // Commonly used value for e
+        while (!e.gcd(phi).equals(BigInteger.ONE)) {
+            e = e.add(BigInteger.ONE);
+        }
+
+        // Calculate d (modular multiplicative inverse of e modulo phi(n))
+        BigInteger d = e.modInverse(phi);
+
+        System.out.println("Public key (n): " + n);
+        System.out.println("Public key (e): " + e);
+        System.out.println("Private key (d): " + d);
+
+        System.out.println("Enter the message to be encrypted (as a number):");
+        BigInteger message = scanner.nextBigInteger();
+
+        // Encryption
+        BigInteger encryptedMessage = message.modPow(e, n);
+        System.out.println("Encrypted message: " + encryptedMessage);
+
+        System.out.println("Enter the encrypted message:");
+        BigInteger encrypted = scanner.nextBigInteger();
+
+        // Decryption
+        BigInteger decryptedMessage = encrypted.modPow(d, n);
+        System.out.println("Decrypted message: " + decryptedMessage);
+    }
+}
+
+****ECC POINT GENERATION****
+
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+public class tp {
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Enter the prime field modulus (p):");
+        BigInteger p = scanner.nextBigInteger();
+
+        System.out.println("Enter the coefficient 'a' of the elliptic curve equation:");
+        BigInteger a = scanner.nextBigInteger();
+
+        System.out.println("Enter the coefficient 'b' of the elliptic curve equation:");
+        BigInteger b = scanner.nextBigInteger();
+
+        List<ECPoint> points = generatePointsOnCurve(a, b, p);
+
+        System.out.println("Points on the curve:");
+        for (ECPoint point : points) {
+            System.out.println("x: " + point.getX() + ", y: " + point.getY());
+        }
+    }
+
+    // Generate all points on the curve
+    private static List<ECPoint> generatePointsOnCurve(BigInteger a, BigInteger b, BigInteger p) {
+        List<ECPoint> points = new ArrayList<>();
+
+        for (BigInteger x = BigInteger.ZERO; x.compareTo(p) < 0; x = x.add(BigInteger.ONE)) {
+            BigInteger ySquare = x.pow(3).add(a.multiply(x)).add(b).mod(p);
+            BigInteger y = modularSquareRoot(ySquare, p);
+
+            if (y != null) {
+                points.add(new ECPoint(x, y));
+                points.add(new ECPoint(x, p.subtract(y))); // Include the point with negated y
+            }
+        }
+
+        return points;
+    }
+
+    // Modular square root algorithm (Tonelli-Shanks algorithm)
+    private static BigInteger modularSquareRoot(BigInteger a, BigInteger p) {
+        a = a.mod(p);
+        if (a.equals(BigInteger.ZERO) || a.equals(BigInteger.ONE)) {
+            return a;
+        }
+
+        // Check if a is a quadratic residue (legendreSymbol(a|p) = 1)
+        if (legendreSymbol(a, p) != 1) {
+            return null; // No square root exists
+        }
+
+        BigInteger q = p.subtract(BigInteger.ONE);
+        int s = q.getLowestSetBit();
+        q = q.shiftRight(s);
+
+        // Find a non-residue
+        BigInteger z = BigInteger.TWO;
+        while (legendreSymbol(z, p) != -1) {
+            z = z.add(BigInteger.ONE);
+        }
+
+        BigInteger c = z.modPow(q, p);
+        BigInteger r = a.modPow(q.add(BigInteger.ONE).shiftRight(1), p);
+        BigInteger t = a.modPow(q, p);
+        int m = s;
+
+        while (!t.equals(BigInteger.ONE)) {
+            int i = 1;
+            BigInteger tmp = t;
+            while (!tmp.equals(BigInteger.ONE)) {
+                tmp = tmp.modPow(BigInteger.TWO, p);
+                i++;
+            }
+
+            BigInteger exponent = BigInteger.valueOf(2).pow(m - i - 1);
+            BigInteger b = c.modPow(exponent, p);
+            r = r.multiply(b).mod(p);
+            t = t.multiply(b.pow(2)).mod(p);
+            c = b.pow(2).mod(p);
+            m = i;
+        }
+
+        return r;
+    }
+
+    // Legendre symbol (a|p)
+    private static int legendreSymbol(BigInteger a, BigInteger p) {
+        BigInteger ls = a.modPow(p.subtract(BigInteger.ONE).shiftRight(1), p);
+        if (ls.equals(p.subtract(BigInteger.ONE))) {
+            return -1;
+        } else {
+            return ls.intValue();
+        }
+    }
+
+    // Elliptic curve point
+    private static class ECPoint {
+        private final BigInteger x;
+        private final BigInteger y;
+
+        public ECPoint(BigInteger x, BigInteger y) {
+            this.x = x;
+            this.y = y;
+        }
+
+        public BigInteger getX() {
+            return x;
+        }
+
+        public BigInteger getY() {
+            return y;
+        }
+    }
+}
+
+
+****ELGAMAL*****
+
+import java.math.BigInteger;
+import java.util.Scanner;
+
+public class ElGamal {
+
+    private static final BigInteger TWO = BigInteger.valueOf(2);
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Enter a prime number (p):");
+        BigInteger p = scanner.nextBigInteger();
+
+        if (!p.isProbablePrime(80)) {
+            System.out.println("Please enter a prime number.");
+            return;
+        }
+
+        System.out.println("Enter a primitive root modulo p (g):");
+        BigInteger g = scanner.nextBigInteger();
+
+        System.out.println("Enter the private key (a), such that 1 < a < p - 1:");
+        BigInteger a = scanner.nextBigInteger();
+        if (a.compareTo(BigInteger.ONE) <= 0 || a.compareTo(p.subtract(BigInteger.ONE)) >= 0) {
+            System.out.println("Invalid private key.");
+            return;
+        }
+
+        // Public key calculation
+        BigInteger A = g.modPow(a, p);
+
+        System.out.println("Public key (A): " + A);
+
+        System.out.println("Enter the message to be encrypted (as a number):");
+        BigInteger message = scanner.nextBigInteger();
+
+        // Encryption
+        System.out.println("Encrypting...");
+        BigInteger k = generateRandomK(p);
+        BigInteger y1 = g.modPow(k, p);
+        BigInteger y2 = message.multiply(A.modPow(k, p)).mod(p);
+        System.out.println("Encrypted message (y1): " + y1);
+        System.out.println("Encrypted message (y2): " + y2);
+
+        System.out.println("Enter the encrypted message (y1):");
+        BigInteger encryptedY1 = scanner.nextBigInteger();
+        System.out.println("Enter the encrypted message (y2):");
+        BigInteger encryptedY2 = scanner.nextBigInteger();
+
+        // Decryption
+        System.out.println("Decrypting...");
+        BigInteger decryptedMessage = encryptedY2.multiply(encryptedY1.modPow(a.negate(), p)).mod(p);
+        System.out.println("Decrypted message: " + decryptedMessage);
+    }
+
+    // Generate a random number k such that 1 < k < p-1
+    private static BigInteger generateRandomK(BigInteger p) {
+        BigInteger k;
+        do {
+            k = new BigInteger(p.bitLength(), new java.util.Random());
+        } while (k.compareTo(BigInteger.ONE) <= 0 || k.compareTo(p.subtract(TWO)) >= 0);
+        return k;
+    }
+}
+
+
     </pre>
 </body>
 </html>
